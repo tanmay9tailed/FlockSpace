@@ -11,10 +11,10 @@ const Post = ({ post }) => {
   const [comments, setComments] = useState(post.comments);
 
   const handleLike = async () => {
-    await axios.post(`http://localhost:5000/api/post/${post._id}/like`, {
+    await axios.post(`https://flock-space-server.vercel.app/api/post/${post._id}/like`, {
       userId: localStorage.getItem("userId"),
     });
-    const response = await axios.get(`http://localhost:5000/api/feed`);
+    const response = await axios.get(`https://flock-space-server.vercel.app/api/feed`);
     const updatedPost = response.data.find((item) => item._id === post._id);
 
     if (updatedPost) {
@@ -24,12 +24,12 @@ const Post = ({ post }) => {
   };
 
   const handleComment = async (text) => {
-    await axios.post(`http://localhost:5000/api/post/${post._id}/comment`, {
+    await axios.post(`https://flock-space-server.vercel.app/api/post/${post._id}/comment`, {
       userId: localStorage.getItem("userId"),
       text: text
     });
     console.log(text);
-    const response = await axios.get(`http://localhost:5000/api/feed`);
+    const response = await axios.get(`https://flock-space-server.vercel.app/api/feed`);
     const updatedPost = response.data.find((item) => item._id === post._id);
 
     if (updatedPost) {
