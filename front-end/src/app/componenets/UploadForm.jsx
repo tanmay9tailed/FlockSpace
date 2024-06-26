@@ -27,7 +27,7 @@ const UploadForm = ({ fetchPosts }) => {
 
     try {
       // Send POST request to create post
-      const response = await axios.post("https://flock-space-server.vercel.app/api/createPost", formData, {
+      const response = await axios.post("http://localhost:5000/api/createPost", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

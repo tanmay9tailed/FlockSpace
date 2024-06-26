@@ -20,7 +20,7 @@ const Page = () => {
 
   const fetchPosts = async () => {
     try {
-      const response = await axios.get(`https://flock-space-server.vercel.app/api/feed`);
+      const response = await axios.get(`http://localhost:5000/api/feed`);
       console.log(response.data)
       setPosts(response.data);
     } catch (error) {
