@@ -15,7 +15,11 @@ const Page = () => {
     e.preventDefault();
 
     try {
+<<<<<<< HEAD
       const response = await axios.get(`http://localhost:5000/api/${username}`, {
+=======
+      const response = await axios.get(`https://flock-space-server.vercel.app/api/${username}`, {
+>>>>>>> 019e411f16bed44dde5ae5962f5a342dcbc2ef26
         username,
         password,
       });

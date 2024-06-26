@@ -15,7 +15,7 @@ const Page = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post(`http://localhost:5000/api/createUser`, {
+      const response = await axios.post(`https://flock-space-server.vercel.app/api/createUser`, {
         username,
         password,
       });
