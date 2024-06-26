@@ -41,7 +41,7 @@ const Post = ({ post }) => {
   return (
     <div className=" w-full border-b-2 border-b-slate-400 pb-2 mt-8">
       <div className="w-full flex items-center justify-center">
-        <img className="w-3/4 rounded" src={`http://localhost:5000${post.imageUrl}`} alt="Post" />
+        <img className="w-3/4 rounded" src={`https://flock-space-server.vercel.app${post.imageUrl}`} alt="Post" />
       </div>
       <p className="pl-10 mt-2 font-bold">Description: {post.description}</p>
       <Likes className="pl-10 flex items-center gap-2" likes={likes} onLike={handleLike} />
