@@ -10,6 +10,9 @@ const app = express();
 connectDB();
 
 app.use(cors());
+app.use(cors({
+  origin: 'https://flock-space.vercel.app/'
+}));
 app.use(express.json());
 app.use('/uploads', express.static('uploads'));
 app.use('/api', postRoutes);
