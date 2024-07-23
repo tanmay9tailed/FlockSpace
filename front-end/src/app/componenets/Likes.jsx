@@ -1,10 +1,15 @@
-import React from 'react';
-import ThumbUpIcon from '@mui/icons-material/ThumbUp';
+import { FavoriteBorder } from "@mui/icons-material";
+import React from "react";
 
 const Likes = ({ likes, onLike, className }) => (
   <div className={className}>
-    <span className='pt-2'>{likes} </span>
-    <button onClick={onLike}> <ThumbUpIcon/></button>
+    <button onClick={onLike}>
+      {" "}
+      <FavoriteBorder />
+    </button>
+    <div className="font-semibold">
+      <span className="pt-2">{likes} </span> Likes
+    </div>
   </div>
 );
 

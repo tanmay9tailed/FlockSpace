@@ -4,6 +4,7 @@ const Comment = require("../models/comment");
 const Like = require("../models/like");
 const multer = require("multer");
 const path = require("path");
+const { getSocketInstance } = require("../socket");
 
 // Multer setup for file uploads
 const storage = multer.diskStorage({
@@ -32,37 +33,71 @@ exports.createPost = async (req, res) => {
 };
 
 exports.getFeed = async (req, res) => {
-  const posts = await Post.find().populate('createdBy').populate('likes').populate('comments');
-  res.status(200).json(posts);
+  const { userId } = req.query;
+  const posts = await Post.find().populate("createdBy").populate("likes").populate("comments").exec();
+  const responsePosts = posts.map((post) => {
+    const like = post.likes.find((like) => like.createdBy === userId);
+    // console.log("userId", userId)
+    // console.log("Like", post.likes);
+    return {
+      _id: post._id,
+      comments: post.comments,
+      createdAt: post.createdAt,
+      createdBy: post.createdBy,
+      description: post.description,
+      imageUrl: post.imageUrl,
+      likesCount: post.likesCount,
+      likedByUser: !!post.likes.find((like) => like.createdBy === userId),
+    };
+  });
+  res.status(200).json(responsePosts);
 };
 
 exports.likePost = async (req, res) => {
   const { postId } = req.params;
   const { userId } = req.body;
 
-  const post = await Post.findById(postId);
-  if (!post) {
-    return res.status(404).json({ message: "Post not found" });
+  const io = getSocketInstance().getSocket();
+
+  try {
+    const post = await Post.findById(postId);
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    const like = await Like.findOne({ postId, createdBy: userId });
+    if (like) {
+      await Like.findByIdAndDelete(like._id);
+      post.likes = post.likes.filter((likeId) => likeId.toString() !== like._id.toString());
+      await post.save();
+      await post.updateLikesCount();
+      io.emit("like_change", {
+        isLike: false,
+        postId,
+        userId,
+        likesCount: post.likesCount,
+      });
+
+      return res.status(200).json({ message: "Post unliked successfully" });
+    } else {
+      const newLike = new Like({ postId, createdBy: userId });
+      await newLike.save();
+      post.likes.push(newLike._id);
+      await post.save();
+      await post.updateLikesCount();
+      console.log(io);
+      io.emit("like_change", {
+        isLike: true,
+        postId,
+        userId,
+        likesCount: post.likesCount,
+      });
+      return res.status(200).json({ message: "Post liked successfully" });
+    }
+  } catch (error) {
+    console.error("Error liking/unliking post:", error);
+    return res.status(500).json({ message: "Server error" });
   }
-
-  const likesByUser = await Like.find({
-    postId,
-    createdBy: userId,
-  }).exec();
-
-  if (likesByUser && likesByUser.length > 0) {
-    await Like.findByIdAndDelete(likesByUser[0].id).exec();
-    post.likes = post.likes.filter((like) => like.id === likesByUser[0].id);
-    await post.updateLikesCount();
-  } else {
-    const like = new Like({ createdBy: userId, postId });
-    await like.save();
-
-    post.likes.push(like._id);
-    await post.updateLikesCount();
-  }
-
-  res.status(200).json(post);
 };
 
 exports.commentOnPost = async (req, res) => {

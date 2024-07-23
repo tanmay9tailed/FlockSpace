@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { AuthContext } from "./componenets/AuthProvider";
 
 const Page = () => {
   const [username, setUsername] = useState("");
@@ -11,25 +12,37 @@ const Page = () => {
   const [err, setErr] = useState("");
   const router = useRouter();
 
+  const authContext = useContext(AuthContext);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-<<<<<<< HEAD
       const response = await axios.get(`http://localhost:5000/api/${username}`, {
-=======
-      const response = await axios.get(`https://flock-space-server.vercel.app/api/${username}`, {
->>>>>>> 019e411f16bed44dde5ae5962f5a342dcbc2ef26
         username,
         password,
       });
-      console.log("Login successful:", response.data);
-      setErr("");
-      localStorage.setItem("userId", response.data[0]._id);
-      console.log(localStorage.getItem("userId"));
-      router.replace("/feed");
+      console.log(response);
+      if (response.status === 200) {
+        console.log("Login successful:", JSON.stringify(response.data));
+        const userId = response.data._id;
+        console.log(userId);
+        // localStorage.setItem("userId", userId);
+
+        authContext.signInUser(userId);
+
+        router.replace("/feed");
+      } else if (response.status === 404) {
+        setErr("Invalid username or password");
+      } else {
+        setErr("Some error occured. Please try again later.");
+      }
     } catch (error) {
-      setErr("Username already exists");
+      if (error.code === "ERR_BAD_REQUEST") {
+        setErr("username not exist");
+      } else {
+        setErr("Some error occured. Please try again later.");
+      }
       console.error("Error creating user:", error);
     }
   };
@@ -37,7 +50,7 @@ const Page = () => {
   return (
     <div className="flex flex-col items-center justify-center px-6 py-8">
       <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
-        <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
+        <div className="p-6 space-y-4 md:space-y-6 sm:p-8 shadow-2xl">
           <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
             Log in to your account
           </h1>
@@ -47,7 +60,7 @@ const Page = () => {
                 htmlFor="username"
                 className={err === "" ? "block mb-2 text-sm font-medium text-gray-900 dark:text-white" : "text-red-600"}
               >
-                {err === "" ? "Your Username" : "Invalid username or password"}
+                {err === "" ? "Your Username" : err}
               </label>
               <input
                 type="text"

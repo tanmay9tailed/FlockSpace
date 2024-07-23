@@ -22,11 +22,12 @@ exports.createUser = async (req, res) => {
 };
 
 // Get a user by Username
+// Currently only username is checked for login purpose
 exports.getUserByUsername = async (req, res) => {
   const { username } = req.params;
 
   try {
-    const user = await User.find({ username });
+    const user = await User.findOne({ username });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
