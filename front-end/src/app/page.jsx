@@ -18,7 +18,7 @@ const Page = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.get(`http://localhost:5000/api/${username}`, {
+      const response = await axios.get(`https://flock-space-server.vercel.app/api/${username}`, {
         username,
         password,
       });

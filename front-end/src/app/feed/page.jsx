@@ -24,7 +24,7 @@ const Page = () => {
 
   const fetchPosts = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/feed?userId=${userId}`);
+      const response = await axios.get(`https://flock-space-server.vercel.app/api/feed?userId=${userId}`);
       console.log(response.data);
       // setPosts(response.data);
       setFeed(response.data);

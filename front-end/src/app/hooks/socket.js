@@ -3,7 +3,7 @@ import { io } from "socket.io-client";
 
 
 export function useSocket() {
-    const socket = io("http://localhost:5000");
+    const socket = io("https://flock-space-server.vercel.app");
     return socket;
 }
 

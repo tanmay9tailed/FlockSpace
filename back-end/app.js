@@ -9,7 +9,11 @@ const app = express();
 // Connect to MongoDB
 connectDB();
 
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:3000', // Allow only this origin
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true, // Enable cookies if needed
+  }));
 app.use(express.json());
 app.get('/', (req, res) => {
     res.send("Server listening")

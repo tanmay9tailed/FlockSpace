@@ -22,10 +22,10 @@ const Post = ({ post }) => {
   });
 
   const handleLike = async () => {
-    await axios.post(`http://localhost:5000/api/post/${post._id}/like`, {
+    await axios.post(`https://flock-space-server.vercel.app/api/post/${post._id}/like`, {
       userId: localStorage.getItem("userId"),
     });
-    const response = await axios.get(`http://localhost:5000/api/feed?userId=${userId}`);
+    const response = await axios.get(`https://flock-space-server.vercel.app/api/feed?userId=${userId}`);
     const updatedPost = response.data.find((item) => item._id === post._id);
 
     if (updatedPost) {
@@ -35,12 +35,12 @@ const Post = ({ post }) => {
   };
 
   const handleComment = async (text) => {
-    await axios.post(`http://localhost:5000/api/post/${post._id}/comment`, {
+    await axios.post(`https://flock-space-server.vercel.app/api/post/${post._id}/comment`, {
       userId: localStorage.getItem("userId"),
       text: text,
     });
     // console.log(text);
-    const response = await axios.get(`http://localhost:5000/api/feed?userId=${userId}`);
+    const response = await axios.get(`https://flock-space-server.vercel.app/api/feed?userId=${userId}`);
     const updatedPost = response.data.find((item) => item._id === post._id);
 
     if (updatedPost) {
@@ -55,7 +55,7 @@ const Post = ({ post }) => {
       <div className="w-full flex items-center justify-center">
         <img
           className="w-full h-[500px] object-cover rounded"
-          src={`http://localhost:5000${post.imageUrl}`}
+          src={`https://flock-space-server.vercel.app${post.imageUrl}`}
           alt="Post"
         />
       </div>
